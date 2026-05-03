@@ -1,4 +1,5 @@
 import random
+from pathlib import Path
 from simpleai.search import (
     astar,
     breadth_first,
@@ -15,6 +16,8 @@ ALGORITIMOS = [
     ("Gulosa", greedy),
     ("AStar", astar),
 ]
+
+RESULTADOS_DIR = Path("resultados")
 
 N_EXECUCOES = 50
 MAPA = (75, 75)

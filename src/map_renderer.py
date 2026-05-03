@@ -15,7 +15,7 @@ def gerar_mapa_txt(path_total, prob, docas_lista, nome_arq):
         elif dy == -1:
             setas[at] = "↓"
 
-    with open(nome_arq, "w", encoding="utf-8") as f:
+    with open(nome_arq, "w+", encoding="utf-8") as f:
         f.write(f"Relatório de Missão: {nome_arq}\n")
         f.write("S=Início, G=Fim Missão, X=Obstáculo, ~=Tráfego, D=Doca, C=Coleta\n\n")
         for y in range(prob.grid_size[1] - 1, -1, -1):

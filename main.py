@@ -8,6 +8,7 @@ from src.config import (
     OBSTACULOS,
     CONGESTIONAMENTO,
     PACOTES,
+    RESULTADOS_DIR,
 )
 
 from src.models import AGVProblem
@@ -77,7 +78,7 @@ for nome, busca_func in ALGORITIMOS:
             caminho_total_missao,
             prob_para_coleta,
             DOCAS,
-            f"results/resultado_{nome}.txt",
+            f"{RESULTADOS_DIR}/resultado_{nome}.txt",
         )
     else:
         resumo_final.append((nome, "FALHA NA MISSÃO", "N/A"))
