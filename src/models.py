@@ -6,6 +6,7 @@ from .heuristic import manhattan
 
 Posicao = tuple[int, int]
 
+
 @dataclass(frozen=True)
 class InstanciaAGV:
     id_execucao: int

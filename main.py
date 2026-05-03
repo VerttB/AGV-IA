@@ -1,7 +1,4 @@
 import time
-from simpleai.search import (
-    SearchProblem,
-)
 from config import (
     ALGORITIMOS,
     MAPA,
@@ -13,42 +10,10 @@ from config import (
     PACOTES,
 )
 
+from src.models import AGVProblem
+
+
 resumo_final = []
-
-
-class AGVProblem(SearchProblem):
-    def __init__(self, start, goal, obstaculos, congestion, size):
-        super(AGVProblem, self).__init__(initial_state=start)
-        self.goal_node = goal
-        self.obstacles = obstaculos
-        self.congestion_zones = congestion
-        self.grid_size = size
-
-    def actions(self, state):
-        x, y = state
-        possiveis = [(x, y + 1), (x, y - 1), (x + 1, y), (x - 1, y)]
-        return [
-            p
-            for p in possiveis
-            if 0 <= p[0] < self.grid_size[0]
-            and 0 <= p[1] < self.grid_size[1]
-            and p not in self.obstacles
-        ]
-
-    def result(self, state, action):
-        return action
-
-    def is_goal(self, state):
-        return state == self.goal_node
-
-    def cost(self, state, action, state2):
-        if state2 in self.congestion_zones:
-            return 10
-        return 1
-
-    def heuristic(self, state):
-        # Distância de Manhattan: h(n) = |x1 - x2| + |y1 - y2|[cite: 3]
-        return abs(state[0] - self.goal_node[0]) + abs(state[1] - self.goal_node[1])
 
 
 def gerar_mapa_txt(path_total, prob, docas_lista, nome_arq):

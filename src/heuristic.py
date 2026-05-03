@@ -1,4 +1,4 @@
-from .models import Posicao
+Posicao = tuple[int, int]
 
 
 def manhattan(a: Posicao, b: Posicao) -> int:
