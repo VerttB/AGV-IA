@@ -8,6 +8,8 @@ from simpleai.search import (
     greedy,
 )
 
+from .utils import gerar_pacotes_aleatorios
+
 
 ALGORITIMOS = [
     ("Largura", breadth_first),
@@ -18,7 +20,7 @@ ALGORITIMOS = [
 ]
 
 RESULTADOS_DIR = Path("resultados")
-
+N_PACOTES = 20
 N_EXECUCOES = 50
 MAPA = (75, 75)
 INICIO = (random.randint(0, 5), random.randint(0, 5))
@@ -32,21 +34,4 @@ CONGESTIONAMENTO = set(
     map(lambda _: (random.randint(10, 60), random.randint(10, 60)), range(400))
 )
 
-
-PACOTES = [
-    {
-        "id": 1,
-        "doca": DOCAS[random.randint(0, 3)],
-        "prio": random.randint(1, 2),
-    },
-    {
-        "id": 2,
-        "doca": DOCAS[random.randint(0, 3)],
-        "prio": random.randint(1, 2),
-    },
-    {
-        "id": 3,
-        "doca": DOCAS[random.randint(0, 3)],
-        "prio": random.randint(1, 2),
-    },
-]
+PACOTES = gerar_pacotes_aleatorios(N_PACOTES, DOCAS)
