@@ -158,7 +158,7 @@ for nome, busca_func in ALGORITIMOS:
             caminho_total_missao,
             prob_para_coleta,
             DOCAS,
-            f"resultado_{nome}.txt",
+            f"results/resultado_{nome}.txt",
         )
     else:
         resumo_final.append((nome, "FALHA NA MISSÃO", "N/A"))
