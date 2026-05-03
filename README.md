@@ -39,6 +39,12 @@ O objetivo do agente e planejar uma sequência de movimentos e entregas que resp
 - a prioridade dos pacotes;
 - a doca obrigatória de cada pacote.
 
+Regra de entrega dos pacotes:
+
+1. entregar primeiro o pacote com maior prioridade;
+2. em caso de empate de prioridade, escolher a doca mais proxima da posicao atual do AGV;
+3. se ainda houver empate, usar o identificador do pacote como desempate.
+
 O código também compara diferentes algoritmos de busca da biblioteca SimpleAI:
 
 - Busca em Largura;
@@ -46,6 +52,28 @@ O código também compara diferentes algoritmos de busca da biblioteca SimpleAI:
 - Busca de Custo Uniforme;
 - Busca Gulosa;
 - A*.
+
+### Representação do ambiente
+- Representação do mapa: grid 50x50
+- Tipos de células
+    ```text
+    . = piso normal
+    F = corredor rapido
+    L = area lenta / manobra dificil
+    ~ = congestionamento
+    X = obstaculo fixo
+    B = bloqueio temporario
+    ```
+    - As células `X` e `B` não podem ser atravessadas. As demais células podem ser percorridas, mas possuem custos diferentes.
+- Os custos por terreno:
+    ```python
+    TERRAIN_COSTS = {
+        ".": 1.0,
+        "F": 0.7,
+        "L": 2.0,
+        "~": 4.0,
+    }
+    ```
 
 ## Stack usada
 
@@ -56,31 +84,32 @@ O código também compara diferentes algoritmos de busca da biblioteca SimpleAI:
 
 1. Crie e ative um ambiente virtual:
 
-```bash
-python -m venv .venv
-source .venv/bin/activate    #linux
-```
+    ```bash
+    python -m venv .venv
+    source .venv/bin/activate    #linux
+    ```
 
-No Windows:
+    No Windows:
 
-```bash
-.venv\Scripts\activate
-```
+    ```
+    .venv\Scripts\activate
+    ```
+
 
 2. Instale as dependências:
 
-```bash
-pip install -r requirements.txt
-```
+    ```bash
+    pip install -r requirements.txt
+    ```
 
 3. Execute o projeto:
 
-```bash
-python main.py
-```
+    ```bash
+    python main.py
+    ```
 
-Para sair do ambiente virtual, basta executar:
+    Para sair do ambiente virtual, basta executar:
 
-```bash
-deactivate
-```
+    ```bash
+    deactivate
+    ```

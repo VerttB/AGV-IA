@@ -1,5 +1,5 @@
-
-
+N_EXECUCOES = 50
+GRID_SIZE = (50, 50)
 GOAL = (4, 0)  # Posição final do AGV
 START = (0, 0)  # Posição inicial do AGV
 MAP = [
