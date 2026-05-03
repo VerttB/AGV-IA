@@ -1,25 +1,9 @@
 from simpleai.search import SearchProblem, astar
 from simpleai.search.viewers import BaseViewer
+from config import GOAL, START, MAP, directions
 
 
-GOAL = (4, 0)  # Posição final do AGV
-START = (0, 0)  # Posição inicial do AGV
-MAP = [
-    [0, 0, 0, 0, 0],
-    [1, 1, 1, 0, 0],
-    [0, 0, 0, 0, 0],
-    [0, 0, 0, 1, 0],
-    [0, 0, 0, 1, 0],
-    [0, 1, 1, 1, 0],
-]  # Grafo ou grid?
 obstacles = []  # Lista com a posição dos obstaculos no mapa| Acho que não vai precisar
-directions = [
-    (0, 1),  # direita
-    (0, -1),  # esquerda
-    (1, 0),  # baixo
-    (-1, 0),  # cima
-]
-
 path = []
 
 
