@@ -16,6 +16,7 @@ ALGORITIMOS = [
     ("AStar", astar),
 ]
 
+N_EXECUCOES = 50
 MAPA = (75, 75)
 INICIO = (random.randint(0, 5), random.randint(0, 5))
 COLETA = (random.randint(30, 40), random.randint(30, 40))
