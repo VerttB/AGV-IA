@@ -1,5 +1,7 @@
 # Planejamento de Rotas de AGVs em Centro de Distribuição Automatizado
 
+Este trabalho foi desenvolvido como primeiro trabalho para a matéria de Inteligência Artificial.
+
 ## Problema
 ### Contexto
 Centros de distribuição modernos dependem cada vez mais de veículos autônomos guiados, os chamados AGVs, para movimentar mercadorias entre áreas de armazenamento, separação e expedição. Em operações desse tipo, atrasos, gargalos e escolhas ruins de rota podem comprometer a produtividade de todo o sistema logístico.
@@ -22,6 +24,28 @@ O ambiente apresenta as seguintes características:
 O agente deve encontrar uma sequência de movimentos que leve o AGV do ponto de partida ao ponto de coleta e, em seguida, até o ponto de entrega, minimizando o custo total da operação. Esse custo pode envolver distância percorrida, tempo estimado de deslocamento e penalidades associadas a congestionamento ou desvios. O agente deve respeitar as restrições do ambiente e produzir rotas que sejam viáveis e eficientes dentro do contexto operacional do armazém.
 
 ![imagem-ilustrativa-agv](fluxo-agv.png)
+
+## Resumo da solução
+Este projeto modela um problema de planejamento de rotas para um AGV em um centro de distribuição automatizado.
+
+O AGV já inicia a simulação com 3 pacotes recebidos e precisa entregá-los em docas específicas. O ambiente é representado por um grid, onde cada célula corresponde a uma área do armazém: corredores normais, corredores rápidos, áreas lentas, congestionamentos, obstáculos fixos e bloqueios temporários.
+
+O objetivo do agente e planejar uma sequência de movimentos e entregas que respeite:
+
+- a posição inicial do AGV;
+- os obstáculos e bloqueios do armazém;
+- os diferentes custos de terreno;
+- o peso dos pacotes ainda carregados;
+- a prioridade dos pacotes;
+- a doca obrigatória de cada pacote.
+
+O código também compara diferentes algoritmos de busca da biblioteca SimpleAI:
+
+- Busca em Largura;
+- Busca em Profundidade;
+- Busca de Custo Uniforme;
+- Busca Gulosa;
+- A*.
 
 ## Stack usada
 
