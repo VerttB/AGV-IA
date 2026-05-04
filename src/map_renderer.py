@@ -71,7 +71,7 @@ def gerar_mapa_txt(instancia, caminho, arquivo):
         mapa.write(f"Coleta: {instancia.coleta}\n")
         mapa.write(f"Docas: {instancia.docas}\n")
         mapa.write(
-            f"Pacotes: {ordenar_pacotes(instancia.pacotes, instancia.coleta)}\n\n"
+            f"Pacotes: {ordenar_pacotes(instancia.pacotes)}\n\n"
         )
         mapa.write("\n".join(linhas_mapa(instancia, caminho)))
         mapa.write("\n")
