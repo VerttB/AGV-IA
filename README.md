@@ -54,7 +54,7 @@ O código também compara diferentes algoritmos de busca da biblioteca SimpleAI:
 - A*.
 
 ### Representação do ambiente
-- Representação do mapa: grid 50x50
+- Representação do mapa: grid 80x80
 - Tipos de células
     ```text
     . = piso normal
