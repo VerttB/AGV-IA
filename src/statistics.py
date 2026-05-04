@@ -16,11 +16,11 @@ def criar_estatisticas(algoritmos):
 
 def registrar_resultado(estatisticas, resultado):
     dados = estatisticas[resultado.algoritmo]
-    dados["nos_expandidos"].append(resultado.nos_expandidos)
 
     if resultado.sucesso:
         dados["custos"].append(resultado.custo)
         dados["tempos"].append(resultado.tempo)
+        dados["nos_expandidos"].append(resultado.nos_expandidos)
         dados["sucessos"] += 1
     else:
         dados["falhas"] += 1
