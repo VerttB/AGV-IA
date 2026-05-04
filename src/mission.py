@@ -24,7 +24,8 @@ def executar_segmento(instancia, algoritmo, origem, destino):
         instancia.congestionamentos,
         GRID_SIZE,
     )
-    return algoritmo(problema, graph_search=True)
+    resultado = algoritmo(problema, graph_search=True)
+    return resultado, problema.nos_expandidos
 
 
 def executar_missao(instancia, nome_algoritmo, algoritmo):
@@ -40,6 +41,7 @@ def executar_missao(instancia, nome_algoritmo, algoritmo):
     custo_total = 0
     caminho_total = []
     segmentos_resolvidos = 0
+    nos_expandidos_total = 0
     inicio_tempo = time.perf_counter()
 
     try:
@@ -50,7 +52,10 @@ def executar_missao(instancia, nome_algoritmo, algoritmo):
             ]
 
             for tipo, origem, destino, pacote_atual in segmentos:
-                resultado = executar_segmento(instancia, algoritmo, origem, destino)
+                resultado, nos_expandidos = executar_segmento(
+                    instancia, algoritmo, origem, destino
+                )
+                nos_expandidos_total += nos_expandidos
                 if resultado is None:
                     tempo_total = time.perf_counter() - inicio_tempo
                     return ResultadoMissao(
@@ -63,6 +68,7 @@ def executar_missao(instancia, nome_algoritmo, algoritmo):
                         pacotes=pacotes,
                         distancia_percorrida=max(0, len(caminho_total) - 1),
                         segmentos_resolvidos=segmentos_resolvidos,
+                        nos_expandidos=nos_expandidos_total,
                         segmento_falha={
                             "tipo": tipo,
                             "origem": origem,
@@ -92,6 +98,7 @@ def executar_missao(instancia, nome_algoritmo, algoritmo):
             pacotes=pacotes,
             distancia_percorrida=max(0, len(caminho_total) - 1),
             segmentos_resolvidos=segmentos_resolvidos,
+            nos_expandidos=nos_expandidos_total,
             erro=repr(exc),
         )
 
@@ -106,4 +113,5 @@ def executar_missao(instancia, nome_algoritmo, algoritmo):
         pacotes=pacotes,
         distancia_percorrida=max(0, len(caminho_total) - 1),
         segmentos_resolvidos=segmentos_resolvidos,
+        nos_expandidos=nos_expandidos_total,
     )

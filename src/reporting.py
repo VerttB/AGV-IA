@@ -69,6 +69,7 @@ def campos_resultado():
         "tempo",
         "distancia_percorrida",
         "segmentos_resolvidos",
+        "nos_expandidos",
         "segmento_falha",
         "erro",
     ]
@@ -83,6 +84,7 @@ def linha_resultado(resultado):
         "tempo": resultado.tempo,
         "distancia_percorrida": resultado.distancia_percorrida,
         "segmentos_resolvidos": resultado.segmentos_resolvidos,
+        "nos_expandidos": resultado.nos_expandidos,
         "segmento_falha": resultado.segmento_falha or "",
         "erro": resultado.erro or "",
     }
@@ -100,6 +102,9 @@ def salvar_resumo_csv(arquivo, resumo):
                 "tempo_medio",
                 "tempo_min",
                 "tempo_max",
+                "nos_expandidos_medio",
+                "nos_expandidos_min",
+                "nos_expandidos_max",
                 "sucessos",
                 "falhas",
             ],
@@ -116,16 +121,17 @@ def salvar_relatorio_markdown(
         md.write(f"Total de execucoes: `{total_execucoes}`\n\n")
         md.write("## Resultados agregados\n\n")
         md.write(
-            "| Algoritmo | Custo medio | Custo min | Custo max | Tempo medio (s) | Tempo min | Tempo max | Sucessos | Falhas |\n"
+            "| Algoritmo | Custo medio | Custo min | Custo max | Tempo medio (s) | Tempo min | Tempo max | Nos exp. medio | Nos exp. min | Nos exp. max | Sucessos | Falhas |\n"
         )
         md.write(
-            "|:----------|------------:|----------:|----------:|----------------:|----------:|----------:|---------:|-------:|\n"
+            "|:----------|------------:|----------:|----------:|----------------:|----------:|----------:|---------------:|-------------:|-------------:|---------:|-------:|\n"
         )
         for linha in resumo:
             md.write(
                 f"| {linha['algoritmo']} | "
                 f"{_fmt(linha['custo_medio'])} | {_fmt(linha['custo_min'])} | {_fmt(linha['custo_max'])} | "
                 f"{_fmt(linha['tempo_medio'], 6)} | {_fmt(linha['tempo_min'], 6)} | {_fmt(linha['tempo_max'], 6)} | "
+                f"{_fmt(linha['nos_expandidos_medio'])} | {_fmt_inteiro(linha['nos_expandidos_min'])} | {_fmt_inteiro(linha['nos_expandidos_max'])} | "
                 f"{linha['sucessos']} | {linha['falhas']} |\n"
             )
 
@@ -133,8 +139,16 @@ def salvar_relatorio_markdown(
         for titulo, arquivo_grafico in [
             ("Custo medio por algoritmo", graficos.get("custo_medio")),
             ("Tempo medio por algoritmo", graficos.get("tempo_medio")),
+            (
+                "Nos expandidos medio por algoritmo",
+                graficos.get("nos_expandidos_medio"),
+            ),
             ("Falhas por algoritmo", graficos.get("falhas")),
             ("Custo total por execucao", graficos.get("custo_por_execucao")),
+            (
+                "Nos expandidos por execucao",
+                graficos.get("nos_expandidos_por_execucao"),
+            ),
         ]:
             if arquivo_grafico:
                 md.write(f"### {titulo}\n\n")
@@ -180,3 +194,9 @@ def _fmt(valor, casas=2):
     if valor is None:
         return "--"
     return f"{valor:.{casas}f}"
+
+
+def _fmt_inteiro(valor):
+    if valor is None:
+        return "--"
+    return str(valor)

@@ -27,6 +27,13 @@ def gerar_graficos(resumo, resultados_por_execucao, pasta_graficos):
         "Tempo medio (s)",
         pasta_graficos / "tempo_medio.png",
     )
+    graficos["nos_expandidos_medio"] = _grafico_barras(
+        _linhas_com_valor(resumo, "nos_expandidos_medio"),
+        "nos_expandidos_medio",
+        "Nos expandidos medio por algoritmo",
+        "Nos expandidos medio",
+        pasta_graficos / "nos_expandidos_medio.png",
+    )
     graficos["falhas"] = _grafico_barras(
         resumo,
         "falhas",
@@ -37,6 +44,13 @@ def gerar_graficos(resumo, resultados_por_execucao, pasta_graficos):
     graficos["custo_por_execucao"] = _grafico_linhas_custo(
         resultados_por_execucao,
         pasta_graficos / "custo_por_execucao.png",
+    )
+    graficos["nos_expandidos_por_execucao"] = _grafico_linhas_resultados(
+        resultados_por_execucao,
+        "nos_expandidos",
+        "Nos expandidos por execucao",
+        "Nos expandidos",
+        pasta_graficos / "nos_expandidos_por_execucao.png",
     )
 
     return graficos
@@ -59,30 +73,51 @@ def _grafico_barras(linhas, chave, titulo, eixo_y, arquivo):
 
 
 def _grafico_linhas_custo(resultados_por_execucao, arquivo):
+    return _grafico_linhas_resultados(
+        resultados_por_execucao,
+        "custo",
+        "Custo total por execucao",
+        "Custo total",
+        arquivo,
+        apenas_sucesso=True,
+    )
+
+
+def _grafico_linhas_resultados(
+    resultados_por_execucao,
+    atributo,
+    titulo,
+    eixo_y,
+    arquivo,
+    apenas_sucesso=False,
+):
     series = {}
     for resultado in resultados_por_execucao:
-        if not resultado.sucesso:
+        if apenas_sucesso and not resultado.sucesso:
+            continue
+        valor = getattr(resultado, atributo)
+        if valor is None:
             continue
         series.setdefault(resultado.algoritmo, []).append(
-            (resultado.execucao, resultado.custo)
+            (resultado.execucao, valor)
         )
 
     plt.figure(figsize=(11, 5))
     for algoritmo, pontos in series.items():
         pontos_ordenados = sorted(pontos)
         execucoes = [ponto[0] for ponto in pontos_ordenados]
-        custos = [ponto[1] for ponto in pontos_ordenados]
+        valores = [ponto[1] for ponto in pontos_ordenados]
         plt.plot(
             execucoes,
-            custos,
+            valores,
             marker="o",
             markersize=2.5,
             linewidth=1.2,
             label=algoritmo,
         )
 
-    plt.title("Custo total por execucao")
-    plt.ylabel("Custo total")
+    plt.title(titulo)
+    plt.ylabel(eixo_y)
     plt.xlabel("Execucao")
     plt.grid(True, linestyle="--", alpha=0.35)
     plt.legend()

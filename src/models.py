@@ -29,6 +29,7 @@ class ResultadoMissao:
     pacotes: list[dict]
     distancia_percorrida: int
     segmentos_resolvidos: int
+    nos_expandidos: int
     segmento_falha: dict | None = None
     erro: str | None = None
 
@@ -50,8 +51,10 @@ class AGVProblem(SearchProblem):
         self.obstacles = obstacles
         self.congestion_zones = congestion_zones
         self.grid_size = grid_size
+        self.nos_expandidos = 0
 
     def actions(self, state):
+        self.nos_expandidos += 1
         x, y = state
         candidates = [
             (x, y + 1),
