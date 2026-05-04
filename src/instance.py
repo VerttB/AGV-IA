@@ -2,7 +2,6 @@ import random
 
 from .config import DOCAS, GRID_SIZE, N_CONGESTIONAMENTOS, N_OBSTACULOS, N_PACOTES
 from .models import InstanciaAGV
-from .heuristic import manhattan
 from .utils import gerar_pacotes_aleatorios
 
 
@@ -56,13 +55,7 @@ def gerar_instancia_aleatoria(id_execucao):
     )
 
 
-def ordenar_pacotes(pacotes, ponto_coleta):
-    """Maior prioridade primeiro; empate pela doca mais proxima da coleta."""
+def ordenar_pacotes(pacotes):
+    """Ordena somente por prioridade, da maior para a menor."""
 
-    return sorted(
-        pacotes,
-        key=lambda pacote: (
-            -pacote["prio"],
-            manhattan(pacote["doca"], ponto_coleta),
-        ),
-    )
+    return sorted(pacotes, key=lambda pacote: -pacote["prio"])
