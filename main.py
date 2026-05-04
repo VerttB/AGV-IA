@@ -1,92 +1,81 @@
-import time
-from src.config import (
-    ALGORITIMOS,
-    MAPA,
-    INICIO,
-    COLETA,
-    DOCAS,
-    OBSTACULOS,
-    CONGESTIONAMENTO,
-    PACOTES,
-    RESULTADOS_DIR,
-)
-
-from src.models import AGVProblem
+from src.charts import gerar_graficos
+from src.config import ALGORITMOS, N_EXECUCOES, RESULTADOS_DIR
+from src.instance import gerar_instancia_aleatoria
 from src.map_renderer import gerar_mapa_txt
-
-resumo_final = []
-
-
-for p in [INICIO, COLETA] + DOCAS:
-    OBSTACULOS.discard(p)
-    CONGESTIONAMENTO.discard(p)
-
-# Ordena os pacotes na prioridade
-PACOTES.sort(
-    key=lambda p: (
-        p["prio"],
-        abs(p["doca"][0] - COLETA[0]) + abs(p["doca"][1] - COLETA[1]),
-    )
+from src.mission import executar_missao
+from src.reporting import (
+    encontrar_primeira_falha,
+    montar_resumo,
+    preparar_pasta_resultados,
+    salvar_relatorio_markdown,
+    salvar_resultados_execucao,
+    salvar_resumo_csv,
 )
+from src.statistics import criar_estatisticas, imprimir_tabela, registrar_resultado
 
 
-for nome, busca_func in ALGORITIMOS:
-    print(f"Iniciando missão completa para: {nome}")
-    pos_agv_viva = INICIO
-    caminho_total_missao = []
-    custo_total_missao = 0
-    tempo_total_missao = 0
-    sucesso_completo = True
+def main():
+    preparar_pasta_resultados(RESULTADOS_DIR)
 
-    # O loop só para quando todos os pacotes forem entregues
-    for pkg in PACOTES:
-        t_segmento_start = time.perf_counter()
+    estatisticas = criar_estatisticas(ALGORITMOS)
+    instancias = {}
+    resultados_gerais = []
 
-        # Segmento 1: Da posição atual até o ponto de coleta[cite: 2]
-        prob_para_coleta = AGVProblem(
-            pos_agv_viva, COLETA, OBSTACULOS, CONGESTIONAMENTO, MAPA
+    for numero_execucao in range(1, N_EXECUCOES + 1):
+        print(f"Execucao {numero_execucao}/{N_EXECUCOES}")
+        instancia = gerar_instancia_aleatoria(numero_execucao)
+        instancias[numero_execucao] = instancia
+
+        resultados_execucao = []
+        for nome, algoritmo in ALGORITMOS:
+            resultado = executar_missao(instancia, nome, algoritmo)
+            registrar_resultado(estatisticas, resultado)
+            resultados_execucao.append(resultado)
+            resultados_gerais.append(resultado)
+
+        pasta_execucao = RESULTADOS_DIR / f"execucao_{numero_execucao:03d}"
+        salvar_resultados_execucao(pasta_execucao, instancia, resultados_execucao)
+
+    resumo = montar_resumo(estatisticas)
+    salvar_resumo_csv(RESULTADOS_DIR / "resumo_geral.csv", resumo)
+
+    graficos = gerar_graficos(
+        resumo,
+        resultados_gerais,
+        RESULTADOS_DIR / "graficos",
+    )
+
+    falha = encontrar_primeira_falha(instancias, resultados_gerais)
+    falha_analisada = None
+    if falha is not None:
+        instancia_falha, resultado_falha = falha
+        mapa_falha = (
+            RESULTADOS_DIR
+            / f"execucao_{resultado_falha.execucao:03d}"
+            / f"mapa_falha_{resultado_falha.algoritmo}.txt"
         )
-        res_para_coleta = busca_func(prob_para_coleta, graph_search=True)
-
-        if res_para_coleta:
-            # Segmento 2: Do ponto de coleta até a doca designada[cite: 2]
-            prob_para_doca = AGVProblem(
-                COLETA, pkg["doca"], OBSTACULOS, CONGESTIONAMENTO, MAPA
-            )
-            res_para_doca = busca_func(prob_para_doca, graph_search=True)
-
-            if res_para_doca:
-                tempo_total_missao += time.perf_counter() - t_segmento_start
-                custo_total_missao += res_para_coleta.cost + res_para_doca.cost
-                # Concatena os caminhos no rastro total
-                caminho_total_missao.extend(
-                    [n[1] for n in res_para_coleta.path()]
-                    + [n[1] for n in res_para_doca.path()][1:]
-                )
-                # O AGV agora está na doca; esta é sua nova posição inicial[cite: 4]
-                pos_agv_viva = pkg["doca"]
-            else:
-                sucesso_completo = False
-                break
-        else:
-            sucesso_completo = False
-            break
-
-    if sucesso_completo:
-        resumo_final.append((nome, custo_total_missao, tempo_total_missao))
-        gerar_mapa_txt(
-            caminho_total_missao,
-            prob_para_coleta,
-            DOCAS,
-            f"{RESULTADOS_DIR}/resultado_{nome}.txt",
+        gerar_mapa_txt(instancia_falha, resultado_falha.caminho, mapa_falha)
+        falha_analisada = (
+            instancia_falha,
+            resultado_falha,
+            mapa_falha.relative_to(RESULTADOS_DIR).as_posix(),
         )
-    else:
-        resumo_final.append((nome, "FALHA NA MISSÃO", "N/A"))
 
-print("\n" + "=" * 75)
-print(f"{'ALGORITMO':<20} | {'CUSTO ACUMULADO':<20} | {'TEMPO DE EXECUÇÃO (s)':<20}")
-print("-" * 75)
-for n, c, t in resumo_final:
-    t_val = f"{t:.6f}" if isinstance(t, float) else t
-    print(f"{n:<20} | {str(c):<20} | {t_val:<20}")
-print("=" * 75)
+    salvar_relatorio_markdown(
+        RESULTADOS_DIR / "relatorio_geral.md",
+        resumo,
+        {
+            nome: caminho.relative_to(RESULTADOS_DIR)
+            for nome, caminho in graficos.items()
+        },
+        falha_analisada,
+        N_EXECUCOES,
+    )
+
+    imprimir_tabela(resumo)
+    print(f"\nResultados gerados em: {RESULTADOS_DIR}")
+    print(f"Relatorio geral: {RESULTADOS_DIR / 'relatorio_geral.md'}")
+
+
+if __name__ == "__main__":
+    main()

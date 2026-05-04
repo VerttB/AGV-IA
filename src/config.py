@@ -1,4 +1,3 @@
-import random
 from pathlib import Path
 from simpleai.search import (
     astar,
@@ -8,10 +7,7 @@ from simpleai.search import (
     greedy,
 )
 
-from .utils import gerar_pacotes_aleatorios
-
-
-ALGORITIMOS = [
+ALGORITMOS = [
     ("Largura", breadth_first),
     ("Profundidade", depth_first),
     ("CustoUniforme", uniform_cost),
@@ -20,18 +16,10 @@ ALGORITIMOS = [
 ]
 
 RESULTADOS_DIR = Path("resultados")
-N_PACOTES = 20
+
+N_PACOTES = 3
 N_EXECUCOES = 50
-MAPA = (75, 75)
-INICIO = (random.randint(0, 5), random.randint(0, 5))
-COLETA = (random.randint(30, 40), random.randint(30, 40))
-DOCAS = [(10, 70), (30, 70), (50, 70), (70, 70)]
-
-OBSTACULOS = set(
-    map(lambda _: (random.randint(0, 74), random.randint(0, 74)), range(750))
-)
-CONGESTIONAMENTO = set(
-    map(lambda _: (random.randint(10, 60), random.randint(10, 60)), range(400))
-)
-
-PACOTES = gerar_pacotes_aleatorios(N_PACOTES, DOCAS)
+GRID_SIZE = (75, 75)
+DOCAS = [(5, 45), (20, 45), (35, 45), (45, 45)]
+N_OBSTACULOS = 300
+N_CONGESTIONAMENTOS = 200
