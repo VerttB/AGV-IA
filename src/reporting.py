@@ -27,7 +27,7 @@ def salvar_resultados_execucao(pasta_execucao, instancia, resultados):
 
 
 def salvar_instancia_markdown(arquivo, instancia):
-    pacotes_ordenados = ordenar_pacotes(instancia.pacotes, instancia.coleta)
+    pacotes_ordenados = ordenar_pacotes(instancia.pacotes)
 
     with open(arquivo, "w", encoding="utf-8") as md:
         md.write(f"# Execucao {instancia.id_execucao}\n\n")
