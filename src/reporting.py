@@ -100,7 +100,6 @@ def salvar_resumo_csv(arquivo, resumo):
                 "tempo_medio",
                 "tempo_min",
                 "tempo_max",
-                "distancia_media",
                 "sucessos",
                 "falhas",
             ],
@@ -117,17 +116,17 @@ def salvar_relatorio_markdown(
         md.write(f"Total de execucoes: `{total_execucoes}`\n\n")
         md.write("## Resultados agregados\n\n")
         md.write(
-            "| Algoritmo | Custo medio | Custo min | Custo max | Tempo medio (s) | Tempo min | Tempo max | Distancia media | Sucessos | Falhas |\n"
+            "| Algoritmo | Custo medio | Custo min | Custo max | Tempo medio (s) | Tempo min | Tempo max | Sucessos | Falhas |\n"
         )
         md.write(
-            "|:----------|------------:|----------:|----------:|----------------:|----------:|----------:|----------------:|---------:|-------:|\n"
+            "|:----------|------------:|----------:|----------:|----------------:|----------:|----------:|---------:|-------:|\n"
         )
         for linha in resumo:
             md.write(
                 f"| {linha['algoritmo']} | "
                 f"{_fmt(linha['custo_medio'])} | {_fmt(linha['custo_min'])} | {_fmt(linha['custo_max'])} | "
                 f"{_fmt(linha['tempo_medio'], 6)} | {_fmt(linha['tempo_min'], 6)} | {_fmt(linha['tempo_max'], 6)} | "
-                f"{_fmt(linha['distancia_media'])} | {linha['sucessos']} | {linha['falhas']} |\n"
+                f"{linha['sucessos']} | {linha['falhas']} |\n"
             )
 
         md.write("\n## Graficos\n\n")
